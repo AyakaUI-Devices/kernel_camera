@@ -508,16 +508,25 @@ int32_t cam_sensor_update_slave_info(struct cam_cmd_probe *probe_info,
 		probe_info->expected_data;
 	s_ctrl->sensordata->slave_info.sensor_id_mask =
 		probe_info->data_mask;
+#ifdef CONFIG_CAM_SENSOR_LEGACY_PROBE_RESERVED
+	/*
+	 * Older CamX (e.g. stock fogos) passes only the pipeline delay in the
+	 * reserved field; there is no separate probe slave address.
+	 */
+	s_ctrl->pipeline_delay = probe_info->reserved;
+	s_ctrl->probe_sensor_slave_addr = 0;
+#else
 	/*
          * Userspace passes the first 8 bit pipeline delay
          * and last 8 bit slave address in reserved field.
          */
 	s_ctrl->pipeline_delay =
 		(probe_info->reserved >> 8) & 0xFF;
+	s_ctrl->probe_sensor_slave_addr = ( probe_info->reserved & 0xFF );
+#endif
 
 	s_ctrl->sensor_probe_addr_type =  probe_info->addr_type;
 	s_ctrl->sensor_probe_data_type =  probe_info->data_type;
-	s_ctrl->probe_sensor_slave_addr = ( probe_info->reserved & 0xFF );
 
 	s_ctrl->probe_sub_device          =  probe_info->probe_sub_device;
 	s_ctrl->sub_device_addr           =  probe_info->sub_device_addr;
