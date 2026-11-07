@@ -165,9 +165,8 @@ static int32_t cam_flash_driver_cmd(struct cam_flash_ctrl *fctrl,
 			flash_cap.max_current_torch[i] =
 				soc_private->torch_max_current[i];
 #ifdef CONFIG_CAMERA_FLASH_IIC_COMPATIBLE
-		rc = of_property_read_u32_array(fctrl->of_node, "distinguish-flash-supplier",
-			flash_iic_supplier, 3);
-		if (!rc) {
+		if (!of_property_read_u32_array(fctrl->of_node,
+			"distinguish-flash-supplier", flash_iic_supplier, 3)) {
 			CAM_DBG(CAM_FLASH, "Distinguish IIC Flash Supplier dev:0x%x addr:0x%x data:0x%x",
 				flash_iic_supplier[0],flash_iic_supplier[1],flash_iic_supplier[2]);
 			if (cam_flash_fill_vreg_setting(fctrl)){
